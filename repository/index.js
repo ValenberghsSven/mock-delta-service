@@ -2,7 +2,6 @@ import mu from 'mu';
 const targetGraph = "http://mu.semte.ch/application";
 
 const getDocumentNamesForAgendaitem = async (uuid) => {
-
   const query = `
   PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
   PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
