@@ -8,11 +8,12 @@ const getDocumentNamesForAgendaitem = async (uuid) => {
   PREFIX dct: <http://purl.org/dc/terms/>
   PREFIX dossier: <https://data.vlaanderen.be/ns/dossier#>
   PREFIX pav:  <http://purl.org/pav/>
+  PREFIX besluitvorming:  <http://data.vlaanderen.be/ns/besluitvorming#>
   
   SELECT ?documentContainer ?documentName WHERE {
     GRAPH <${targetGraph}> { 
       ?agendaitem mu:uuid "${uuid}" ;
-        ext:bevatAgendapuntDocumentversie ?documents .
+        besluitvorming:geagendeerdStuk ?documents .
       ?documentContainer dossier:collectie.bestaatUit ?documents .
       ?documents dct:title ?documentName .
       FILTER NOT EXISTS { ?hasNewerVersion pav:previousVersion ?documents . }
