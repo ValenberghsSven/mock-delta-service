@@ -28,6 +28,26 @@ const getDocumentNamesForAgendaitem = async (uuid) => {
   });
 }
 
+
+const getFileExtensions = async () => {
+  const query = `
+  PREFIX nfo: <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#>
+  PREFIX  dbpedia:  <http://dbpedia.org/ontology/>
+  SELECT DISTINCT ?extension WHERE {
+    GRAPH <${targetGraph}> { 
+        ?file a nfo:FileDataObject.
+        ?file dbpedia:fileExtension ?extension.
+    }
+  }`;
+
+  const data = await mu.query(query).catch(err => {
+    console.error(err)
+  });
+  return data.results.bindings.map((binding) => {
+    return binding.extension.value;
+  });
+};
+
 const parseSparqlResults = (data) => {
     const vars = data.head.vars;
     return data.results.bindings.map(binding => {
@@ -40,6 +60,10 @@ const parseSparqlResults = (data) => {
         return obj;
     })
 };
+
+
+
 module.exports = {
-  getDocumentNamesForAgendaitem
+  getDocumentNamesForAgendaitem,
+  getFileExtensions
 };

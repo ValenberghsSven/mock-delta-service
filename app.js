@@ -26,3 +26,14 @@ app.get('/documentNames', async (req, res) => {
   }
 });
 
+app.get('/fileExtensions', async (req, res) => {
+  try {
+    const fileExtensions = await repository.getFileExtensions();
+    res.header('Content-Type', 'application/vnd.api+json');
+    res.send({ status: ok, statusCode: 200, body: { fileExtensions: fileExtensions } });
+
+  } catch (error) {
+    console.error(error);
+    res.send({ status: ok, statusCode: 500, body: { error } });
+  }
+});
