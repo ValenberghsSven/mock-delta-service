@@ -2,6 +2,7 @@ import mu from 'mu';
 const targetGraph = "http://mu.semte.ch/application";
 
 const getCountsForPublication = async (uuid) => {
+  // TODO after merging KAS-2404 this will no longer work
   const translationsQuery = `PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX dossier: <https://data.vlaanderen.be/ns/dossier#>
