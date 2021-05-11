@@ -20,9 +20,7 @@ const getDocumentNamesForAgendaitem = async (uuid) => {
   } }  GROUP BY ?documentContainer
   `
 
-  const data = await mu.query(query).catch(err => {
-    console.error(err)
-  });
+  let data = await mu.query(query);
   return data.results.bindings.map((binding) => {
     return binding.documentName.value;
   });
@@ -39,9 +37,7 @@ const getFileExtensions = async () => {
     }
   }`;
 
-  const data = await mu.query(query).catch(err => {
-    console.error(err)
-  });
+  const data = await mu.query(query);
   return data.results.bindings.map((binding) => {
     return binding.extension.value;
   });
