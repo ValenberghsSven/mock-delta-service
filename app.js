@@ -10,23 +10,6 @@ app.use(bodyParser.json({ type: 'application/*+json' }));
 app.use(cors());
 
 
-app.get('/getCountsForPublication', async (req, res) => {
-  const uuid = req.query.uuid;
-  if (!uuid) {
-    res.send({ statusCode: 400, body: "uuid missing, search for counts failed" });
-    return;
-  }
-  try {
-    const counts = await repository.getCountsForPublication(uuid);
-    res.header('Content-Type', 'application/vnd.api+json');
-    res.send({ status: ok, statusCode: 200, body: { counts: counts } });
-
-  } catch (error) {
-    console.error(error);
-    res.send({ status: ok, statusCode: 500, body: { error } });
-  }
-});
-
 app.get('/documentNames', async (req, res) => {
   const uuid = req.query.uuid;
   if (!uuid) {
