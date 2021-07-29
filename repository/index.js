@@ -1,40 +1,6 @@
 import mu from 'mu';
 const targetGraph = "http://mu.semte.ch/application";
 
-const getCountsForPublication = async (uuid) => {
-  // TODO after merging KAS-2404 this will no longer work
-  const translationsQuery = `PREFIX prov: <http://www.w3.org/ns/prov#>
-PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX dossier: <https://data.vlaanderen.be/ns/dossier#>
-PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
-PREFIX mu: <http://mu.semte.ch/vocabularies/core/> 
-PREFIX pub: <http://mu.semte.ch/vocabularies/ext/publicatie/>
-
-SELECT (count(?activity) as ?count) ?status ?activityType WHERE {
-  GRAPH <${targetGraph}> {
-     ?activity a                          prov:Activity.
-     ?activity dct:type                   ?activityType.
-     ?activity dossier:vindtPlaatsTijdens ?subcase.
-     ?activity pub:publicatieStatus       ?status.
-     ?status   a                          pub:ActiviteitStatus.
-     ?subcase  ^ext:doorloopt             ?publicationFlow.
-     ?publicationFlow mu:uuid              "${uuid}".
-  }
-}`;
-
-  const activitiesData = await mu.query(translationsQuery).catch(err => {
-    console.error(err)
-  });
-
-  return activitiesData.results.bindings.map((binding) => {
-    return {
-      status: binding.status.value,
-      count: binding.count.value,
-      activityType: binding.activityType.value,
-    };
-  });
-}
-
 const getDocumentNamesForAgendaitem = async (uuid) => {
   const query = `
   PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -54,14 +20,11 @@ const getDocumentNamesForAgendaitem = async (uuid) => {
   } }  GROUP BY ?documentContainer
   `
 
-  const data = await mu.query(query).catch(err => {
-    console.error(err)
-  });
+  let data = await mu.query(query);
   return data.results.bindings.map((binding) => {
     return binding.documentName.value;
   });
 }
-
 
 const getFileExtensions = async () => {
   const query = `
@@ -74,9 +37,7 @@ const getFileExtensions = async () => {
     }
   }`;
 
-  const data = await mu.query(query).catch(err => {
-    console.error(err)
-  });
+  const data = await mu.query(query);
   return data.results.bindings.map((binding) => {
     return binding.extension.value;
   });
@@ -98,6 +59,4 @@ const parseSparqlResults = (data) => {
 module.exports = {
   getDocumentNamesForAgendaitem,
   getFileExtensions,
-  getCountsForPublication,
-  getDocumentNamesForAgendaitem
 };
