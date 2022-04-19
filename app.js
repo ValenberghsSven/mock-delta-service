@@ -2,38 +2,23 @@ import mu from 'mu';
 
 const app = mu.app;
 const bodyParser = require('body-parser');
-const repository = require('./repository');
 const cors = require('cors');
+
+const LOG_INCOMING_DELTA = isTruthy(process.env.LOG_INCOMING_DELTA || true);
 
 app.use(bodyParser.json({ type: 'application/*+json' }));
 app.use(cors());
 
 
-app.get('/documentNames', async (req, res) => {
-  const uuid = req.query.uuid;
-  if (!uuid) {
-    res.send({ statusCode: 400, body: "uuid missing, search for documents failed" });
-    return;
-  }
-  try {
-    const names = await repository.getDocumentNamesForAgendaitem(uuid);
-    res.header('Content-Type', 'application/vnd.api+json');
-    res.send({ statusCode: 200, body: { documentNames: names } });
+app.post('/delta', async function( req, res ) {
+  const delta = req.body;
 
-  } catch (error) {
-    console.error(error);
-    res.send({ statusCode: 500, body: { error } });
+  if (LOG_INCOMING_DELTA) {
+    console.log(`Receiving delta ${JSON.stringify(delta)}`);
   }
+  res.status(202).send();
 });
 
-app.get('/fileExtensions', async (req, res) => {
-  try {
-    const fileExtensions = await repository.getFileExtensions();
-    res.header('Content-Type', 'application/vnd.api+json');
-    res.send({ statusCode: 200, body: { fileExtensions: fileExtensions } });
-
-  } catch (error) {
-    console.error(error);
-    res.send({ statusCode: 500, body: { error } });
-  }
-});
+function isTruthy(value) {
+  return [true, 'true', 1, '1', 'yes', 'Y', 'on'].includes(value);
+}
